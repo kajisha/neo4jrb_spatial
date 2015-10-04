@@ -27,7 +27,7 @@ module Neo4j::ActiveNode
     end
 
     class Query::QueryProxy
-      METHODS << :spatial_match
+      METHODS << 'spatial_match'
 
       def spatial_match(var, params_string, spatial_index = nil)
         index = model.spatial_index_name || spatial_index
@@ -39,6 +39,18 @@ module Neo4j::ActiveNode
           .proxy_as(model, var)
           .params(spatial_params: params_string)
       end
+    end
+  end
+
+  module Scope
+    class ScopeEvalContext
+      module_eval %{
+        def spatial_match(params = {})
+          @target.all.scoping do
+            (@query_proxy || @target).spatial_match(params)
+          end
+        end
+      }, __FILE__, __LINE__ + 1
     end
   end
 end
