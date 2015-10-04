@@ -30,8 +30,7 @@ module Neo4j::ActiveNode
       def spatial_match(var, params_string, spatial_index = nil)
         index = model.spatial_index_name || spatial_index
         fail 'Cannot query without index. Set index in model or as third argument.' unless index
-        binding.pry
-        query = self.is_a?(Query::QueryProxy) ? self : Neo4j::Session.current.query
+        query = self.is_a?(Query::QueryProxy) ? self.query : Neo4j::Session.current.query
 
         query
           .start("#{var} = node:#{index}({spatial_params})")
