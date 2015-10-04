@@ -45,9 +45,9 @@ module Neo4j::ActiveNode
   module Scope
     class ScopeEvalContext
       module_eval %{
-        def spatial_match(params = {})
+        def spatial_match(*args)
           @target.all.scoping do
-            (@query_proxy || @target).spatial_match(params)
+            (@query_proxy || @target).spatial_match(*args)
           end
         end
       }, __FILE__, __LINE__ + 1
