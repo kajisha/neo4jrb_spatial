@@ -27,6 +27,8 @@ module Neo4j::ActiveNode
     end
 
     class Query::QueryProxy
+      METHODS << :spatial_match
+
       def spatial_match(var, params_string, spatial_index = nil)
         index = model.spatial_index_name || spatial_index
         fail 'Cannot query without index. Set index in model or as third argument.' unless index
