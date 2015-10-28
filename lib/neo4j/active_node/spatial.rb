@@ -24,20 +24,13 @@ module Neo4j::ActiveNode
       # end
 
       # private :create_index_callback
-    end
 
-    class Query::QueryProxy
-      METHODS << 'spatial_match'
+      def spatial_match(var, params_string)
+        fail 'Cannot query without index. Set index in model or as third argument.' unless spatial_index_name
 
-      def spatial_match(var, params_string, spatial_index = nil)
-        index = model.spatial_index_name || spatial_index
-        fail 'Cannot query without index. Set index in model or as third argument.' unless index
+        query = Neo4j::Core::Query.new.start("#{var} = node:#{spatial_index_name}('#{params_string}')") & current_scope.query
 
-        start_clause = Neo4j::Core::QueryClauses::StartClause.from_arg("#{var} = node:#{index}({spatial_params})")
-        start_clause.params = {spatial_params: params_string}
-        self.query.clauses.unshift start_clause
-
-        self
+        query.proxy_as(self, var)
       end
     end
   end
